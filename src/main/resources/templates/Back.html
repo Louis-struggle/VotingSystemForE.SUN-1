@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>後台管理</title>
+</head>
+<body>
+<a th:href="@{/FrontVotingItemView}">前台投票</a>
+
+<h3>後台管理</h3>
+	<table id="votingItems">
+		<thead>
+			<td>編號</td>
+			<td>項目</td>
+			<td>刪除</td>
+		</thead>
+		<tbody>
+			
+		</tbody>
+		
+	</table>
+	<form id="addItem">
+		<input type="text" id="itemName" placeholder="請輸入想新增的項目名稱">
+		<button type="submit">新增</button>
+	</form>
+
+<script th:src="@{/axios.min.js}"></script>
+<script>
+	axios.get('http://localhost:8080/VotingSystem/items')
+		.then(response =>{
+			const items = response.data;
+			console.log(items);
+			const tbody = document.querySelector('#votingItems tbody');
+			
+			items.forEach(item =>{
+				const row = document.createElement('tr');
+				
+				const idCell = document.createElement('td');
+				idCell.textContent = item.id;
+				
+				const nameCell = document.createElement('td');
+				nameCell.textContent = item.itemName;
+				/*
+				const addCell = document.createElement('td');
+				const addButton = document.createElement('button');
+				addButton.setAttribute('id', item.id);
+				addButton.textContent = '新增';
+				addCell.appendChild(addButton);
+				*/
+				
+				const deleteCell = document.createElement('td');
+				const deleteButton = document.createElement('button');
+				deleteButton.setAttribute('id', item.id);
+				deleteButton.textContent = '刪除';
+				//設定點擊事件
+				deleteButton.addEventListener('click',function(){
+					handleDelete(item.id);
+				});
+				deleteCell.appendChild(deleteButton);
+				
+
+				row.appendChild(idCell);
+				row.appendChild(nameCell);
+				//row.appendChild(addCell);
+				row.appendChild(deleteCell);
+				tbody.appendChild(row);
+			});
+		})
+		.catch(error => {
+                console.error('Error fetching voting items:', error);
+         });
+         
+	//新增
+	const form = document.getElementById('addItem');
+	form.addEventListener('submit',function(event){
+		event.preventDefault();
+		
+		const itemName = document.getElementById('itemName').value;
+		axios.post('http://localhost:8080/VotingSystem/AddItem',{
+			itemName: itemName
+		})
+		.then(response =>{
+			alert('新增成功')
+			form.reset();
+			location.reload();
+		})
+	    .catch(error => {
+            console.error('新增失敗:', error.response.data);
+    		alert(error.response.data); // 顯示「項目已存在」
+        });
+	})
+	
+	//刪除項目
+	function handleDelete(itemId){
+		axios.post('http://localhost:8080/VotingSystem/DeleteItem',{
+			id:itemId
+		})
+		.then(response => {
+			alert('刪除成功');
+			location.reload();
+		})
+		.catch(error => {
+            console.error('Error deleting item:', error);
+            alert('刪除失敗');
+        });
+	}
+
+</script>
+</body>
+</html>

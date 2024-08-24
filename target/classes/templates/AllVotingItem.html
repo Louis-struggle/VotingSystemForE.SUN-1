@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>投票</title>
+</head>
+<body>
+<a th:href="@{/BackVotingItemView}">後台管理</a>
+<h3>投票</h3>
+	<form id="vote">
+		<ul id="votingItems"></ul>
+		<input id="votingName" type="text" placeholder="請輸入您的大名">
+		<button type="submit">投票</button>
+	</form>
+	<!-- <button onclick="getSelectedItems()">獲取選中的項目</button>-->
+<script th:src="@{/axios.min.js}"></script>
+<script>
+	
+	//獲取目前項目以及票數
+	axios.get('http://localhost:8080/VotingSystem/items')
+		.then(response =>{
+			const items = response.data;
+			console.log(items);
+			const list = document.getElementById('votingItems');
+			
+			items.forEach(item =>{
+				const listItem = document.createElement('li');
+				const checkbox = document.createElement('input');//checkbox裝在input標籤裡面
+				checkbox.type = 'checkbox';
+				checkbox.name = 'votingItem';
+				checkbox.value = item.id;
+				
+				const label = document.createElement('label');
+				label.textContent = `${item.itemName}` + `-票數:` + `${item.numberOfVotes}`;
+							
+				listItem.appendChild(checkbox);
+				listItem.appendChild(label);
+				list.appendChild(listItem);
+			});
+		})
+		.catch(error => {
+                console.error('Error fetching voting items:', error);
+         });
+     
+    const form = document.getElementById('vote');
+	form.addEventListener('submit',function(event){
+		event.preventDefault();
+		
+		const selectedIds = getSelectedItems();
+		const votingName = form.querySelector('#votingName').value;
+		//console.log(votingName)
+		if(selectedIds.length > 0){
+			axios.post('http://localhost:8080/VotingSystem/Voting',{
+				itemId:selectedIds,
+				votingName:votingName
+			})
+			.then(response =>{
+				alert('投票成功');
+				location.reload();
+			})
+			.then(error =>{
+				alert(error.response.data);
+			})
+			
+		}else{
+			alert('請至少選擇一個選項');
+		}
+		
+	})
+         
+     const getSelectedItems = () => {
+		 const checkboxes = document.querySelectorAll('input[name="votingItem"]:checked');
+		 const selectedIds = Array.from(checkboxes).map(checkbox => checkbox.value);
+		console.log('選中的項目 ID:', selectedIds);
+		return selectedIds;
+	 };
+</script>
+</body>
+</html>
