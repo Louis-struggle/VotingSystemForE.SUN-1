@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <title>投票</title>
+<link rel="stylesheet" th:href="@{/AllVotingItem.css}">
 </head>
 <body>
 <a th:href="@{/BackVotingItemView}">後台管理</a>
 <h3>投票</h3>
 	<form id="vote">
 		<ul id="votingItems"></ul>
-		<input id="votingName" type="text" placeholder="請輸入您的大名">
+		<input id="votingName" type="text" placeholder="請輸入您的大名，若該名字已投過被選取項目，票數不會增加">
 		<button type="submit">投票</button>
 	</form>
-	<!-- <button onclick="getSelectedItems()">獲取選中的項目</button>-->
 <script th:src="@{/axios.min.js}"></script>
 <script>
 	

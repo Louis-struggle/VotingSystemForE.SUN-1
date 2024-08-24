@@ -57,8 +57,6 @@ public class Vote {
 		this.itemId = itemId;
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "Vote [id=" + id + ", name=" + name + ", itemId=" + itemId + "]";
