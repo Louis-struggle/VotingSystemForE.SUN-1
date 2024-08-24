@@ -1,11 +1,11 @@
 CREATE TABLE votingItem (
-    itemId INT IDENTITY(1,1) PRIMARY KEY,
+    id INT IDENTITY(1,1) PRIMARY KEY,
     itemName VARCHAR(255) NOT NULL,
 	numberOfVotes INT
 );
 
 CREATE TABLE vote (
-    id INT PRIMARY KEY,
+    id INT IDENTITY(1,1) PRIMARY KEY,
     itemId INT,
     name VARCHAR(255) NOT NULL,
 );
@@ -15,6 +15,7 @@ VALUES('電腦',0),
 	('滑鼠',0)
 
 
+/*預存程序*/
 CREATE PROCEDURE GetAllVote
 	@name VARCHAR(255)
 AS
@@ -23,4 +24,3 @@ BEGIN
   FROM vote
   WHERE name = @name;
 END
-
